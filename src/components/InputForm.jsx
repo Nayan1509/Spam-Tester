@@ -1,32 +1,36 @@
-import { useState } from "react";
-import "../styles/InputForm.css";
+import React from "react";
+import { checkSpamKeywords } from "../utils/spamHelper";
 
-export default function InputForm({ onResult }) {
-  const [subject, setSubject] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const data = {
-      subject,
+export default function InputForm({ subject, setSubject, setResult }) {
+  const handleTest = () => {
+    const spamResult = checkSpamKeywords(subject);
+    setResult({
       length: subject.length,
-      spam: { score: "N/A", report: "Run API here later" },
-    };
-
-    onResult(data);
-    setSubject("");
+      spamScore: spamResult.score,
+      spamWords: spamResult.found,
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="input-form">
+    <div className="bg-white p-6 rounded-2xl shadow-md">
+      <label className="block font-medium mb-2">Email Subject Line</label>
       <input
         type="text"
-        placeholder="Enter subject line..."
         value={subject}
         onChange={(e) => setSubject(e.target.value)}
-        required
+        placeholder="Enter subject line..."
+        className="w-full border rounded-lg p-2 mb-2 text-sm md:text-base"
       />
-      <button type="submit">Test Subject</button>
-    </form>
+      <p className="text-xs md:text-sm text-gray-500 mb-4">
+        Character count: {subject.length}
+      </p>
+
+      <button
+        onClick={handleTest}
+        className="w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition text-sm md:text-base"
+      >
+        Test Subject Line
+      </button>
+    </div>
   );
 }
